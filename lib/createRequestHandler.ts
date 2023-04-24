@@ -1,24 +1,21 @@
-import type {
-  AppLoadContext,
-  ServerBuild,
-  RequestInit as NodeRequestInit,
-  Response as NodeResponse,
-} from "@remix-run/node";
-
 import {
   AbortController as NodeAbortController,
   Headers as NodeHeaders,
   Request as NodeRequest,
   createRequestHandler as createRemixRequestHandler,
   readableStreamToString,
+  type AppLoadContext,
+  type RequestInit as NodeRequestInit,
+  type Response as NodeResponse,
+  type ServerBuild,
 } from "@remix-run/node";
 
 import type {
   APIGatewayProxyEvent,
-  APIGatewayProxyHandler,
-  APIGatewayProxyResult,
   APIGatewayProxyEventMultiValueHeaders,
   APIGatewayProxyEventMultiValueQueryStringParameters,
+  APIGatewayProxyHandler,
+  APIGatewayProxyResult,
 } from "aws-lambda";
 
 export type GetLoadContextFunction = (event: APIGatewayProxyEvent) => AppLoadContext;
@@ -34,18 +31,18 @@ export function createRequestHandler({
   getLoadContext?: GetLoadContextFunction;
   mode?: string;
 }): RequestHandler {
-  let handleRequest = createRemixRequestHandler(build, mode);
+  const handleRequest = createRemixRequestHandler(build, mode);
 
   return async (event) => {
     console.log("event", event);
 
-    let request = createRemixRequest(event);
+    const request = createRemixRequest(event);
 
     console.log("request", request);
 
-    let loadContext = typeof getLoadContext === "function" ? getLoadContext(event) : undefined;
+    const loadContext = typeof getLoadContext === "function" ? getLoadContext(event) : undefined;
 
-    let response = (await handleRequest(request, loadContext)) as NodeResponse;
+    const response = (await handleRequest(request, loadContext)) as NodeResponse;
 
     console.log("response", response);
 
@@ -54,12 +51,12 @@ export function createRequestHandler({
 }
 
 export function createRemixRequest(event: APIGatewayProxyEvent): NodeRequest {
-  let host = event.requestContext.domainName || event.headers["X-Forwarded-Host"] || event.headers["Host"];
-  let scheme = event.headers["X-Forwarded-Proto"] || "https";
-  let search = createRemixQueryString(event.multiValueQueryStringParameters);
-  let url = new URL(`${scheme}://${host}${event.path}${search}`);
-  let controller = new NodeAbortController();
-  let isFormData = event.headers["Content-Type"]?.includes("multipart/form-data");
+  const host = event.requestContext.domainName || event.headers["X-Forwarded-Host"] || event.headers.Host;
+  const scheme = event.headers["X-Forwarded-Proto"] || "https";
+  const search = createRemixQueryString(event.multiValueQueryStringParameters);
+  const url = new URL(`${scheme}://${host}${event.path}${search}`);
+  const controller = new NodeAbortController();
+  const isFormData = event.headers["Content-Type"]?.includes("multipart/form-data");
 
   return new NodeRequest(url.href, {
     method: event.httpMethod,
@@ -77,12 +74,12 @@ export function createRemixRequest(event: APIGatewayProxyEvent): NodeRequest {
 export function createRemixQueryString(
   multiValueQueryStringParameters: APIGatewayProxyEventMultiValueQueryStringParameters | null
 ): string {
-  let remixQueryString = new URLSearchParams();
+  const remixQueryString = new URLSearchParams();
 
   if (multiValueQueryStringParameters) {
-    for (let [param, values] of Object.entries(multiValueQueryStringParameters)) {
+    for (const [param, values] of Object.entries(multiValueQueryStringParameters)) {
       if (values && values.length > 0) {
-        for (let value of values) {
+        for (const value of values) {
           remixQueryString.append(param, value);
         }
       }
@@ -94,12 +91,12 @@ export function createRemixQueryString(
 }
 
 export function createRemixHeaders(multiValueHeaders: APIGatewayProxyEventMultiValueHeaders): NodeHeaders {
-  let remixHeaders = new NodeHeaders();
+  const remixHeaders = new NodeHeaders();
 
   if (multiValueHeaders) {
-    for (let [param, values] of Object.entries(multiValueHeaders)) {
+    for (const [param, values] of Object.entries(multiValueHeaders)) {
       if (values && values.length > 0) {
-        for (let value of values) {
+        for (const value of values) {
           remixHeaders.append(param, value);
         }
       }
@@ -110,16 +107,22 @@ export function createRemixHeaders(multiValueHeaders: APIGatewayProxyEventMultiV
 }
 
 export async function createApiGatewayResponse(nodeResponse: NodeResponse): Promise<APIGatewayProxyResult> {
-  let contentType = nodeResponse.headers.get("Content-Type");
+  const contentType = nodeResponse.headers.get("Content-Type");
 
-  let isBase64Encoded =
+  console.log("contentType", contentType);
+
+  const isBase64Encoded =
     !contentType ||
-    !(contentType.startsWith("text/") || contentType === "application/json" || contentType === "application/xml");
+    !(
+      contentType.startsWith("text/") ||
+      contentType.includes("application/json") ||
+      contentType.includes("application/xml")
+    );
 
-  let headers: APIGatewayProxyResult["headers"] = {};
-  let multiValueHeaders: APIGatewayProxyResult["multiValueHeaders"] = {};
+  const headers: APIGatewayProxyResult["headers"] = {};
+  const multiValueHeaders: APIGatewayProxyResult["multiValueHeaders"] = {};
 
-  for (let [param, value] of nodeResponse.headers.entries()) {
+  for (const [param, value] of nodeResponse.headers.entries()) {
     if (Array.isArray(value)) {
       multiValueHeaders[param] = value;
     } else {

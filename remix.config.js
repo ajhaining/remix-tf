@@ -1,19 +1,19 @@
 /** @type {import('@remix-run/dev').AppConfig} */
 
 const baseConfig = {
-  ignoredRouteFiles: ["**/.*"],
+  assetsBuildDirectory: "build/assets/_static",
   future: {
-    unstable_tailwind: true,
+    unstable_tailwind: true
   },
+  ignoredRouteFiles: ["**/.*"],
+  publicPath: "/_static/",
+  serverBuildPath: "build/server/index.js"
 }
 
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === "production") {
   module.exports = {
     ...baseConfig,
-    publicPath: "/_static/",
-    assetsBuildDirectory: "build/assets/_static",
     server: "server.ts",
-    serverBuildPath: "build/server/index.js",
     serverDependenciesToBundle: "all",
   };
 } else {
