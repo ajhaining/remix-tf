@@ -1,7 +1,7 @@
 /** @type {import('prettier').Config} */
 module.exports = {
   endOfLine: "lf",
-  printWidth: 120,
+  printWidth: 80,
   semi: true,
   singleQuote: false,
   tabWidth: 2,
@@ -11,7 +11,7 @@ module.exports = {
     "^(@remix-run/(.*)$)",
     "<THIRD_PARTY_MODULES>",
     "^types$",
-    "^@/(.*)$",
+    "^~/(.*)$",
     "^[./]",
   ],
   importOrderSeparation: true,
@@ -21,6 +21,9 @@ module.exports = {
   importOrderMergeDuplicateImports: true,
   importOrderCombineTypeAndValueImports: true,
   pluginSearchDirs: false,
-  plugins: ["@ianvs/prettier-plugin-sort-imports", "prettier-plugin-tailwindcss"],
+  plugins: [
+    "@ianvs/prettier-plugin-sort-imports",
+    "prettier-plugin-tailwindcss",
+  ],
   tailwindConfig: "./tailwind.config.js",
 };

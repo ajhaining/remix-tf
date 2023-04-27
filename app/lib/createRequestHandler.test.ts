@@ -1,5 +1,6 @@
 import { Headers } from "@remix-run/node";
-import { createRemixHeaders } from "lib/createRequestHandler";
+
+import { createRemixHeaders } from "~/lib/createRequestHandler";
 
 describe("createRemixHeaders", () => {
   it("creates Remix Header object with the correct header values", () => {

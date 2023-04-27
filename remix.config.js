@@ -2,13 +2,17 @@
 
 const baseConfig = {
   assetsBuildDirectory: "build/assets/_static",
+  serverBuildPath: "build/server/index.js",
+  publicPath: "/_static/",
   future: {
-    unstable_tailwind: true
+    unstable_tailwind: true,
+    v2_errorBoundary: true,
+    v2_meta: true,
+    v2_normalizeFormMethod: true,
+    v2_routeConvention: true,
   },
   ignoredRouteFiles: ["**/.*"],
-  publicPath: "/_static/",
-  serverBuildPath: "build/server/index.js"
-}
+};
 
 if (process.env.NODE_ENV === "production") {
   module.exports = {
@@ -17,5 +21,7 @@ if (process.env.NODE_ENV === "production") {
     serverDependenciesToBundle: "all",
   };
 } else {
-  module.exports = baseConfig;
+  module.exports = {
+    ...baseConfig,
+  };
 }

@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "mikestead.dotenv",
+    "hashicorp.terraform",
+    "bradlc.vscode-tailwindcss",
+    "vivaxy.vscode-conventional-commits"
+  ]
+}
