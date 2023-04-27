@@ -1,4 +1,5 @@
 /** @type {import('prettier').Config} */
+
 module.exports = {
   endOfLine: "lf",
   printWidth: 80,
